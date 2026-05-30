@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA — Fuel for Those Who Never Stop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:   #080808;
+    --white: #ffffff;
+    --off:   #f0f0f0;
+    --lime:  #d4ff00;
+    --mid:   #888888;
+    --dark2: #111111;
+    --rule:  #222222;
+    --HF:    'Bebas Neue', sans-serif;
+    --BF:    'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--white);
+    font-family: var(--BF);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--lime);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(212,255,0,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s ease, width 0.3s, height 0.3s, border-color 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: padding 0.3s ease;
+  }
+  .nav-logo {
+    font-family: var(--HF);
+    font-size: 28px;
+    letter-spacing: 10px;
+    color: var(--white);
+    text-decoration: none;
+    z-index: 1;
+  }
+  .nav-cta {
+    font-family: var(--BF);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--lime);
+    padding: 10px 24px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.8; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-letter {
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    font-family: var(--HF);
+    font-size: clamp(300px, 50vw, 700px);
+    color: #111111;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  .hero-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 24px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease 0.2s forwards;
+    position: relative; z-index: 1;
+  }
+
+  .hero-headline {
+    font-family: var(--HF);
+    font-size: clamp(72px, 12vw, 160px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    position: relative; z-index: 1;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.9s ease 0.4s forwards;
+  }
+  .hero-headline .lime { color: var(--lime); }
+
+  .hero-sub {
+    margin-top: 40px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    position: relative; z-index: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease 0.7s forwards;
+  }
+  .hero-tagline {
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 300;
+    color: #aaaaaa;
+    max-width: 420px;
+    line-height: 1.6;
+  }
+  .hero-scroll {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--mid);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+  }
+  .hero-scroll::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--mid);
+    display: block;
+  }
+
+  .hero-rule {
+    position: absolute;
+    bottom: 0; left: 48px; right: 48px;
+    height: 1px;
+    background: var(--rule);
+    z-index: 1;
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap {
+    background: var(--lime);
+    overflow: hidden;
+    padding: 14px 0;
+    white-space: nowrap;
+  }
+  .marquee-track {
+    display: inline-flex;
+    animation: marquee 18s linear infinite;
+  }
+  .marquee-item {
+    font-family: var(--HF);
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: var(--ink);
+    padding: 0 40px;
+  }
+  .marquee-dot {
+    color: var(--ink);
+    opacity: 0.4;
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 120px 48px; }
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 16px;
+  }
+  .section-rule {
+    width: 100%;
+    height: 1px;
+    background: var(--rule);
+    margin-bottom: 64px;
+  }
+
+  /* ── MANIFESTO ── */
+  #manifesto {
+    background: var(--ink);
+  }
+  .manifesto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .manifesto-left h2 {
+    font-family: var(--HF);
+    font-size: clamp(48px, 6vw, 82px);
+    line-height: 1.0;
+    letter-spacing: 1px;
+  }
+  .manifesto-left h2 .lime { color: var(--lime); }
+  .manifesto-right p {
+    font-size: 16px;
+    font-weight: 300;
+    color: #aaaaaa;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+  .manifesto-right p strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  /* ── PRODUCT ── */
+  #product {
+    background: var(--off);
+    color: var(--ink);
+  }
+  #product .section-rule { background: #dddddd; }
+  #product .section-label { color: #999999; }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .product-left h2 {
+    font-family: var(--HF);
+    font-size: clamp(52px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 32px;
+  }
+  .product-left p {
+    font-size: 15px;
+    font-weight: 300;
+    color: #666666;
+    line-height: 1.8;
+    max-width: 420px;
+    margin-bottom: 40px;
+  }
+
+  /* Bottle visual */
+  .bottle-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 0;
+  }
+  .bottle {
+    width: 140px;
+    position: relative;
+  }
+  .bottle-cap {
+    width: 90px;
+    height: 14px;
+    background: #1a1a1a;
+    margin: 0 auto;
+    border-radius: 3px 3px 0 0;
+  }
+  .bottle-neck {
+    width: 68px;
+    height: 28px;
+    background: #141414;
+    margin: 0 auto;
+  }
+  .bottle-body {
+    width: 140px;
+    height: 280px;
+    background: #0e0e0e;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+  }
+  .bottle-label {
+    position: absolute;
+    top: 24px; left: 12px; right: 12px;
+    height: 200px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .bottle-label-name {
+    font-family: var(--HF);
+    font-size: 28px;
+    letter-spacing: 6px;
+    color: var(--ink);
+  }
+  .bottle-label-stripe {
+    width: 100%;
+    height: 4px;
+    background: var(--lime);
+  }
+  .bottle-label-type {
+    font-family: var(--BF);
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .bottle-label-vol {
+    font-family: var(--HF);
+    font-size: 20px;
+    color: var(--ink);
+  }
+  .bottle-label-sub {
+    font-size: 8px;
+    color: #999;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* ── BENEFITS ── */
+  #benefits {
+    background: var(--ink);
+  }
+  .benefits-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 80px;
+    align-items: end;
+  }
+  .benefits-intro h2 {
+    font-family: var(--HF);
+    font-size: clamp(48px, 6vw, 80px);
+    line-height: 1.0;
+    letter-spacing: 1px;
+  }
+  .benefits-intro p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--mid);
+    line-height: 1.8;
+  }
+  .benefits-intro p strong { color: var(--white); font-weight: 500; }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .benefit-card {
+    background: var(--ink);
+    padding: 40px 32px;
+    transition: background 0.3s;
+  }
+  .benefit-card:hover { background: #0f0f0f; }
+  .benefit-num {
+    font-family: var(--HF);
+    font-size: 36px;
+    color: var(--rule);
+    margin-bottom: 24px;
+    display: block;
+  }
+  .benefit-title {
+    font-family: var(--HF);
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--white);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .benefit-body {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--mid);
+    line-height: 1.7;
+  }
+  .benefit-card.highlight {
+    background: var(--lime);
+  }
+  .benefit-card.highlight .benefit-num { color: rgba(0,0,0,0.2); }
+  .benefit-card.highlight .benefit-title { color: var(--ink); }
+  .benefit-card.highlight .benefit-body { color: #333333; }
+  .benefit-card.highlight:hover { background: #c8f200; }
+
+  /* ── FOR WHO ── */
+  #who {
+    background: var(--off);
+    color: var(--ink);
+  }
+  #who .section-rule { background: #dddddd; }
+  #who .section-label { color: #999; }
+
+  .who-single h2 {
+    font-family: var(--HF);
+    font-size: clamp(52px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 48px;
+    max-width: 800px;
+  }
+  .who-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    border-top: 1px solid #d0d0d0;
+    padding-top: 48px;
+  }
+  .who-body p {
+    font-size: 15px;
+    font-weight: 300;
+    color: #555;
+    line-height: 1.85;
+  }
+  .who-body p strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ── MOMENTS ── */
+  #moments {
+    background: var(--ink);
+    padding-bottom: 0;
+  }
+  .moments-header h2 {
+    font-family: var(--HF);
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 80px;
+  }
+  .moments-header h2 .lime { color: var(--lime); }
+
+  .moments-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border-top: 1px solid var(--rule);
+  }
+  .moment {
+    background: var(--ink);
+    padding: 48px 36px 56px;
+    transition: background 0.3s;
+    position: relative;
+  }
+  .moment:hover { background: #0c0c0c; }
+  .moment-time {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin-bottom: 24px;
+    display: block;
+  }
+  .moment-act {
+    font-family: var(--HF);
+    font-size: 28px;
+    letter-spacing: 0.5px;
+    color: var(--white);
+    margin-bottom: 16px;
+    display: block;
+    line-height: 1.1;
+  }
+  .moment-body {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--mid);
+    line-height: 1.7;
+  }
+
+  /* ── WAITLIST ── */
+  #waitlist {
+    background: var(--lime);
+    color: var(--ink);
+    text-align: center;
+    padding: 120px 48px;
+  }
+  #waitlist h2 {
+    font-family: var(--HF);
+    font-size: clamp(52px, 8vw, 110px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+  #waitlist p {
+    font-size: 16px;
+    font-weight: 300;
+    color: #333;
+    margin-bottom: 48px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  .waitlist-form {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+    margin: 0 auto 24px;
+    border: 2px solid var(--ink);
+  }
+  .waitlist-form input {
+    flex: 1;
+    padding: 18px 24px;
+    font-family: var(--BF);
+    font-size: 14px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--ink);
+  }
+  .waitlist-form input::placeholder { color: #555; }
+  .waitlist-form button {
+    padding: 18px 32px;
+    background: var(--ink);
+    color: var(--lime);
+    font-family: var(--HF);
+    font-size: 16px;
+    letter-spacing: 2px;
+    border: none;
+    cursor: none;
+    transition: background 0.2s;
+  }
+  .waitlist-form button:hover { background: #222; }
+  .waitlist-note {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 1px;
+  }
+  .success-msg {
+    display: none;
+    font-family: var(--HF);
+    font-size: 24px;
+    letter-spacing: 3px;
+    color: var(--ink);
+    margin-top: 16px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--rule);
+  }
+  .footer-logo {
+    font-family: var(--HF);
+    font-size: 22px;
+    letter-spacing: 8px;
+    color: var(--white);
+  }
+  .footer-mid {
+    font-size: 11px;
+    color: var(--mid);
+    letter-spacing: 1px;
+  }
+  .footer-right {
+    font-size: 11px;
+    color: var(--mid);
+    letter-spacing: 1px;
+    text-align: right;
+  }
+  .footer-right a {
+    color: var(--mid);
+    text-decoration: none;
+    display: block;
+    transition: color 0.2s;
+  }
+  .footer-right a:hover { color: var(--lime); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    section { padding: 80px 24px; }
+    #hero { padding: 0 24px 48px; }
+    .manifesto-grid,
+    .product-grid,
+    .benefits-intro { grid-template-columns: 1fr; gap: 48px; }
+    .who-body { grid-template-columns: 1fr; gap: 32px; }
+    .benefits-grid { grid-template-columns: 1fr 1fr; }
+    .moments-strip { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-right { text-align: center; }
+    .who-right { grid-template-columns: 1fr 1fr; }
+    .waitlist-form { flex-direction: column; }
+    .waitlist-form button { padding: 16px; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+  @media (max-width: 480px) {
+    .benefits-grid { grid-template-columns: 1fr; }
+    .moments-strip { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">NOVA</a>
+  <a class="nav-cta" href="#waitlist">Join Waitlist</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-letter" aria-hidden="true">N</div>
+  <p class="hero-label">Pocket-sized espresso · Made for active people</p>
+  <h1 class="hero-headline">
+    FUEL FOR<br>THOSE WHO<br><span class="lime">NEVER STOP.</span>
+  </h1>
+  <div class="hero-sub">
+    <p class="hero-tagline">A pocket-sized espresso shot. No sugar. No synthetics. No prep. Fits your life because it fits in your pocket.</p>
+    <span class="hero-scroll">Scroll to explore</span>
+  </div>
+  <div class="hero-rule"></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">PURE ESPRESSO</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">150MG NATURAL CAFFEINE</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">ZERO SUGAR</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">POCKET SIZED</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">CLEAN LABEL</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">MADE FOR MOVEMENT</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">PURE ESPRESSO</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">150MG NATURAL CAFFEINE</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">ZERO SUGAR</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">POCKET SIZED</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">CLEAN LABEL</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">MADE FOR MOVEMENT</span><span class="marquee-dot">·</span>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section id="manifesto">
+  <p class="section-label reveal">What We Believe</p>
+  <div class="section-rule reveal"></div>
+  <div class="manifesto-grid">
+    <div class="manifesto-left reveal">
+      <h2>YOU TRAIN.<br>YOU RUN.<br>YOU <span class="lime">MOVE.</span></h2>
+    </div>
+    <div class="manifesto-right reveal">
+      <p>Energy drinks loaded with sugar. Coffee you can't carry. Pre-workout powders with ingredients you can't pronounce. <strong>None of it was built for people who actually move.</strong></p>
+      <p>NOVA is different. One shot of pure arabica espresso — clean, portable, and calibrated for your active life. No shortcuts. No synthetics. Just the world's most studied natural performance compound, in a format that actually fits your life.</p>
+      <p><strong>Fuel for those who never stop.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section id="product">
+  <p class="section-label reveal">The Product</p>
+  <div class="section-rule reveal"></div>
+  <div class="product-grid">
+    <div class="product-left reveal">
+      <h2>ONE SHOT.<br>EVERYTHING<br>YOU NEED.</h2>
+      <p>NOVA is a pocket-sized espresso shot built for people who are always moving. No brewing. No mixing. No carrying around a cup. You grab it, take it, and go.</p>
+      <p style="margin-top:0;">Pure coffee. Clean caffeine. Nothing artificial. The kind of energy that works with your body — not against it.</p>
+      <div style="display:flex; gap:32px; flex-wrap:wrap; margin-top: 8px;">
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:40px; color:#080808;">CLEAN</div>
+          <div style="font-size:10px; font-weight:600; letter-spacing:2px; color:#999; text-transform:uppercase;">No artificial ingredients</div>
+        </div>
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:40px; color:#080808;">POCKET</div>
+          <div style="font-size:10px; font-weight:600; letter-spacing:2px; color:#999; text-transform:uppercase;">Goes anywhere you do</div>
+        </div>
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:40px; color:#080808;">ZERO</div>
+          <div style="font-size:10px; font-weight:600; letter-spacing:2px; color:#999; text-transform:uppercase;">Added sugar</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottle-wrap reveal">
+      <div class="bottle">
+        <div class="bottle-cap"></div>
+        <div class="bottle-neck"></div>
+        <div class="bottle-body">
+          <div class="bottle-label">
+            <span class="bottle-label-name">NOVA</span>
+            <div class="bottle-label-stripe"></div>
+            <span class="bottle-label-type">Espresso Shot</span>
+            <span class="bottle-label-vol">60ml</span>
+            <span class="bottle-label-sub">Pure Coffee<br>Zero Additives</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section id="benefits">
+  <p class="section-label reveal">Why It Works</p>
+  <div class="section-rule reveal"></div>
+  <div class="benefits-intro">
+    <div class="reveal">
+      <h2>WHAT A SHOT<br>OF NOVA DOES.</h2>
+    </div>
+    <div class="reveal">
+      <p>Caffeine is one of the most researched performance compounds on earth. The science is unusually clear. <strong>150mg is the proven sweet spot</strong> — enough to perform, not enough to overdo it.</p>
+    </div>
+  </div>
+  <div class="benefits-grid reveal">
+    <div class="benefit-card">
+      <span class="benefit-num">01</span>
+      <span class="benefit-title">ENERGY LIFT</span>
+      <p class="benefit-body">150mg of natural caffeine — calibrated, not excessive. Hits in 20–30 minutes and holds for 4–5 hours. No synthetic spike.</p>
+    </div>
+    <div class="benefit-card highlight">
+      <span class="benefit-num">02</span>
+      <span class="benefit-title">SHARP FOCUS</span>
+      <p class="benefit-body">Coffee's most documented effect. Proven to improve reaction time, alertness, and sustained attention — even at 150mg.</p>
+    </div>
+    <div class="benefit-card">
+      <span class="benefit-num">03</span>
+      <span class="benefit-title">PERFORMANCE</span>
+      <p class="benefit-body">Multiple meta-analyses show caffeine improves endurance performance by 2–4% and delays time to fatigue. Real numbers, real science.</p>
+    </div>
+    <div class="benefit-card">
+      <span class="benefit-num">04</span>
+      <span class="benefit-title">NO SUGAR CRASH</span>
+      <p class="benefit-body">Energy drinks crash because of sugar — not caffeine. NOVA has none. A smooth natural taper, not the floor dropping out.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHO -->
+<section id="who">
+  <p class="section-label reveal">Our People</p>
+  <div class="section-rule reveal"></div>
+  <div class="who-single reveal">
+    <h2>PEOPLE WHO ARE<br>ALWAYS <span style="color:var(--ink); -webkit-text-stroke: 2px #080808; background: var(--lime); padding: 0 8px;">MOVING.</span></h2>
+    <div class="who-body">
+      <p>You don't need a label. You're not defined by how many days a week you train or what sport you play. You just know that moving is part of who you are — and everything in your life is built around that.</p>
+      <p>NOVA is for anyone who refuses to slow down. The ones who wake up early, push through the afternoon, squeeze in a session wherever they can. The ones who care what goes into their body because they care what comes out of it.</p>
+      <p><strong>If you're always moving — NOVA was made for you.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- MOMENTS -->
+<section id="moments">
+  <div class="moments-header reveal">
+    <h2>BEFORE THE GYM.<br>BEFORE THE RUN.<br><span class="lime">BEFORE ANYTHING.</span></h2>
+  </div>
+  <div class="moments-strip">
+    <div class="moment reveal">
+      <span class="moment-time">Before</span>
+      <span class="moment-act">You Go Hard</span>
+      <p class="moment-body">Whatever the session — grab a shot. Clean energy that meets you where you are, not where the label says you should be.</p>
+    </div>
+    <div class="moment reveal">
+      <span class="moment-time">When</span>
+      <span class="moment-act">You're On The Move</span>
+      <p class="moment-body">Fits in your pocket. No bag, no prep, no second-guessing. Just pull it out, take it, keep going.</p>
+    </div>
+    <div class="moment reveal">
+      <span class="moment-time">When</span>
+      <span class="moment-act">You Need To Show Up</span>
+      <p class="moment-body">Some days motivation is low. NOVA doesn't fix that — but clean caffeine makes showing up a lot easier.</p>
+    </div>
+    <div class="moment reveal">
+      <span class="moment-time">Every</span>
+      <span class="moment-act">Single Day</span>
+      <p class="moment-body">Active life doesn't follow a schedule. NOVA doesn't either. Wherever the day takes you — you're ready.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section id="waitlist">
+  <h2>BE FIRST.<br>MOVE FIRST.</h2>
+  <p>NOVA is launching soon. Join the waitlist and be the first to know when it drops.</p>
+  <div class="waitlist-form">
+    <input type="email" id="emailInput" placeholder="your@email.com" />
+    <button onclick="handleWaitlist()">JOIN</button>
+  </div>
+  <p class="waitlist-note">No spam. Just the launch update.</p>
+  <p class="success-msg" id="successMsg">YOU'RE ON THE LIST. ✦</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">NOVA</span>
+  <span class="footer-mid">India · 2025</span>
+  <div class="footer-right">
+    <a href="mailto:hello@drinknova.in">hello@drinknova.in</a>
+    <span style="margin-top:6px; display:block;">Fuel for those who never stop.</span>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, input').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(2.5)';
+      ring.style.width = '56px';
+      ring.style.height = '56px';
+      ring.style.borderColor = 'rgba(212,255,0,0.7)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.borderColor = 'rgba(212,255,0,0.4)';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Waitlist
+  function handleWaitlist() {
+    const val = document.getElementById('emailInput').value;
+    if (!val || !val.includes('@')) {
+      document.getElementById('emailInput').style.borderBottom = '2px solid red';
+      return;
+    }
+    document.querySelector('.waitlist-form').style.display = 'none';
+    document.querySelector('.waitlist-note').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+  }
+
+  document.getElementById('emailInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleWaitlist();
+  });
+</script>
+</body>
+</html>
